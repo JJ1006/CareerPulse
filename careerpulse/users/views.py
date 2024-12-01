@@ -20,19 +20,19 @@ import requests
 
 
 def home(request):
+    print("I am in home page")
     api_key = '3990d862d59f4135a4fe98c8e02bea7b'
     url = f'https://newsapi.org/v2/everything?q=layoff&apiKey={api_key}'
     response = requests.get(url)
-    
-   
+
     if response.status_code == 200:
         articles = response.json().get('articles', [])
     else:
-        articles = []  
+        articles = []
 
-    return render(request, 'users/home.html', {'articles': articles})
+    article_groups = [articles[i:i + 3] for i in range(0, len(articles), 3)]
 
-    return render(request, 'users/home.html')
+    return render(request, 'users/home.html', {'article_groups': article_groups})
 
 class RegisterView(View):
     form_class = RegisterForm

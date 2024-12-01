@@ -1,11 +1,12 @@
 {% extends "users/base.html" %}
 {% block title %} Home Page {% endblock title %}
 {% block content %}
-
+<!-- Main Content -->
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10 text-center">
             <div class="jumbotron bg-light p-5 rounded shadow-lg">
+                <!-- Hero Section -->
                 <h1 class="display-4 font-weight-bold text-primary">Welcome to <span class="text-dark">CareerPulse</span></h1>
                 <p class="lead mt-3">
                     CareerPulse empowers you to navigate career stability with confidence. Our predictive insights reveal 
@@ -13,6 +14,7 @@
                     <strong>knowledge is your strongest ally.</strong>
                 </p>
                 <hr class="my-4">
+                <!-- Action Buttons -->
                 <div class="d-flex justify-content-center mt-4">
                     {% if user.is_authenticated %}
                         <a class="btn btn-primary btn-lg mx-2 shadow-sm" href="{% url 'layoff_prediction_form' %}" role="button">
@@ -38,7 +40,7 @@
     </div>
 </div>
 
-
+<!-- Features Section -->
 <div class="row mt-5">
     <div class="col-md-4 text-center">
         <div class="card border-0 shadow-sm p-4">
@@ -68,28 +70,25 @@
         </div>
     </div>
 </div>
-<div class="row mt-5">
-        <div class="col-12">
-            <div class="text-center mb-4">
-                <h2 class="text-primary font-weight-bold">Global Layoff Insights</h2>
-                <p class="text-muted">Recent layoff trends reshaping industries worldwide</p>
-            </div>
 
-            <div id="layoffNewsCarousel" class="carousel slide position-relative" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    {% for index in articles %}
-                        <button type="button" data-bs-target="#layoffNewsCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %} active {% endif %}" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
-                    {% endfor %}
-                </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
+<!-- News Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="text-center mb-4">
+            <h2 class="text-primary font-weight-bold">Latest News on Layoffs</h2>
+            <p class="text-muted">Stay updated with the latest trends and news in the job market</p>
+        </div>
+
+        <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for article_group in article_groups %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="row">
-                            {% for article in articles|slice:":10" %}
+                            {% for article in article_group %}
                                 <div class="col-md-4 mb-4">
-                                    <a href="{{ article.url }}" target="_blank" style="text-decoration: none; color: inherit;">
+                                    <a href="{{ article.url }}" target="_blank" class="text-decoration-none">
                                         <div class="card border-0 shadow-sm">
-                                         
-                                            <img class="card-img-top img-fluid" src="{% if article.urlToImage %}{{ article.urlToImage }}{% endif %}" alt="{{ article.title }}" style="height: 250px; object-fit: cover;">
+                                            <img class="card-img-top img-fluid" src="{{ article.urlToImage }}" alt="{{ article.title }}" style="height: 250px; object-fit: cover;">
                                             <div class="card-body text-center">
                                                 <h5 class="card-title font-weight-bold text-primary">{{ article.title }}</h5>
                                                 <p class="card-text text-muted">{{ article.description }}</p>
@@ -101,10 +100,11 @@
                             {% endfor %}
                         </div>
                     </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
+
 </div>
 {% endblock content %}
