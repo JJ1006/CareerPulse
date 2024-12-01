@@ -5,7 +5,7 @@
 
 * * *
 
-*CareerPulse - Hackathon Submission*
+*HackFrost Winter Hackathon - Hackathon Submission*
 ======================================
 
 * * *
