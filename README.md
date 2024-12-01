@@ -5,7 +5,7 @@
 
 * * *
 
-*HackFrost Winter Hackathon - Hackathon Submission*
+*HackFrost Winter Hackathon*
 ======================================
 
 * * *
