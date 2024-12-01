@@ -16,12 +16,16 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
+from decouple import config
+from django.conf import settings
+
+
 import requests
 
 
 def home(request):
     print("I am in home page")
-    api_key = '3990d862d59f4135a4fe98c8e02bea7b'
+    api_key = settings.NEWS_API_KEY
     url = f'https://newsapi.org/v2/everything?q=layoff&apiKey={api_key}'
     response = requests.get(url)
 
@@ -30,6 +34,7 @@ def home(request):
     else:
         articles = []
 
+    # Group the articles in sets of 3
     article_groups = [articles[i:i + 3] for i in range(0, len(articles), 3)]
 
     return render(request, 'users/home.html', {'article_groups': article_groups})
@@ -80,7 +85,7 @@ class CustomAdminLoginView(LoginView):
     form_class = LoginForm
     template_name = 'users/adminlogin.html' 
 
-
+    # Predefined credentials
     ADMIN_USERNAME = 'workifyadmin'
     ADMIN_PASSWORD = 'shivam1001'
 
@@ -88,12 +93,12 @@ class CustomAdminLoginView(LoginView):
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
 
-
+        # Check if the credentials match the predefined ones
         if username != self.ADMIN_USERNAME or password != self.ADMIN_PASSWORD:
             form.add_error(None, "Invalid credentials for admin login.")
             return self.form_invalid(form)
 
-
+        # Authenticate and log in the user
         user = authenticate(self.request, username=username, password=password)
         if user is not None:
             login(self.request, user)
@@ -107,7 +112,7 @@ class CustomAdminLoginView(LoginView):
             return self.form_invalid(form)
 
     def get_success_url(self):
-        
+        # Redirect to the admin dashboard or another secure page
         return reverse_lazy('users-admindashboard')
 
  
@@ -116,7 +121,7 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-      
+        # Fetch all LayoffPrediction data
         predictions = LayoffPrediction.objects.all()
         context['predictions'] = predictions
         return context
@@ -168,7 +173,7 @@ def layoff_prediction_form(request):
         form = LayoffPredictionForm(request.POST, instance=prediction_instance)
         if form.is_valid(): 
             data = form.cleaned_data
-
+            # Convert to JSON serializable types
             formatted_data = {
                 'Age': int(data.get('age')),
                 'EducationField': int(data.get('education_field')),
@@ -192,7 +197,7 @@ def layoff_prediction_form(request):
             try:
                 prediction, feature_importance, recommendations = predict(formatted_data)
             except Exception as e:
-                return JsonResponse({'error': str(e)}, status=500)  
+                return JsonResponse({'error': str(e)}, status=500)  # Handle any prediction errors
             
             formdata = form.save(commit=False) 
             formdata.user = request.user       
